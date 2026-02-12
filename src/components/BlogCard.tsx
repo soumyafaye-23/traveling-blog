@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion';
 import Image from 'next/image';
+import { useRef } from 'react';
 
 interface BlogCardProps {
     id: string;
@@ -12,6 +13,29 @@ interface BlogCardProps {
 }
 
 export default function BlogCard({ id, title, description, image, reversed }: BlogCardProps) {
+    const cardRef = useRef<HTMLDivElement>(null);
+    const boxRef = useRef<HTMLDivElement>(null);
+
+    // Mouse move handler for 3D effect
+    const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+        if (!boxRef.current) return;
+
+        const box = boxRef.current;
+        const rect = box.getBoundingClientRect();
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
+
+        const rotateX = ((e.clientY - centerY) / (rect.height / 2)) * -10; // Max 10 deg rotation
+        const rotateY = ((e.clientX - centerX) / (rect.width / 2)) * 10;
+
+        box.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.05, 1.05, 1.05)`;
+    };
+
+    const handleMouseLeave = () => {
+        if (!boxRef.current) return;
+        boxRef.current.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)`;
+    };
+
     return (
         <motion.section
             id={id}
@@ -19,25 +43,38 @@ export default function BlogCard({ id, title, description, image, reversed }: Bl
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-100px" }}
             transition={{ duration: 0.8, ease: "easeInOut" }}
-            className={`max-w-7xl mx-auto py-20 px-4 flex flex-col ${reversed ? 'md:flex-row-reverse' : 'md:flex-row'} items-center gap-12 group`}
+            className={`max-w-7xl mx-auto py-20 px-4 flex flex-col ${reversed ? 'md:flex-row-reverse' : 'md:flex-row'} items-center gap-12 group perspective-1000`}
         >
-            {/* Image Container with Hover Scale */}
-            <motion.div
-                whileHover={{ scale: 1.02 }}
-                transition={{ duration: 0.4 }}
-                className="w-full md:w-1/2 relative h-[400px] md:h-[500px] rounded-[2rem] overflow-hidden shadow-2xl border-4 border-white transform-gpu rotate-0 md:group-hover:rotate-1 md:group-odd:hover:-rotate-1 transition-all duration-500"
+            {/* Image Container with 3D Tilt */}
+            <div
+                ref={cardRef}
+                className="w-full md:w-1/2 relative h-[400px] md:h-[500px] perspective-1000"
+                onMouseMove={handleMouseMove}
+                onMouseLeave={handleMouseLeave}
             >
-                <Image
-                    src={image}
-                    alt={title}
-                    fill
-                    className="object-cover transform scale-100 group-hover:scale-110 transition-transform duration-700 ease-in-out"
-                    sizes="(max-width: 768px) 100vw, 50vw"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-6">
-                    <span className="text-white text-lg font-light tracking-wide">Explore {title.split('–')[0]}</span>
+                <div
+                    ref={boxRef}
+                    className="w-full h-full relative rounded-[2rem] overflow-hidden shadow-2xl border-4 border-white transition-transform duration-100 ease-out transform-style-3d bg-white"
+                    style={{ transformStyle: 'preserve-3d' }}
+                >
+                    <Image
+                        src={image}
+                        alt={title}
+                        fill
+                        className="object-cover transform scale-100"
+                        sizes="(max-width: 768px) 100vw, 50vw"
+                        style={{ transform: 'translateZ(-50px)' }} // Push image back slightly
+                    />
+
+                    {/* Overlay Text with Pop-out effect */}
+                    <div
+                        className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-6"
+                        style={{ transform: 'translateZ(50px)' }} // Bring text forward
+                    >
+                        <span className="text-white text-lg font-light tracking-wide">Explore {title.split('–')[0]}</span>
+                    </div>
                 </div>
-            </motion.div>
+            </div>
 
             {/* Content Container */}
             <div className="w-full md:w-1/2 space-y-6 text-center md:text-left">

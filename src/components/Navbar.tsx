@@ -37,6 +37,8 @@ export default function Navbar() {
               <NavLink href="#shegaon" scrolled={scrolled}>Shegaon</NavLink>
               <NavLink href="#manali" scrolled={scrolled}>Manali</NavLink>
               <NavLink href="#jaipur" scrolled={scrolled}>Jaipur</NavLink>
+              <NavLink href="#laddakh" scrolled={scrolled}>Laddakh</NavLink>
+              <NavLink href="#kailash-mansarovar" scrolled={scrolled}>Kailash</NavLink>
               <NavLink href="#contact" scrolled={scrolled} isButton>Contact</NavLink>
             </div>
           </div>
@@ -75,6 +77,8 @@ export default function Navbar() {
               <MobileNavLink href="#shegaon" onClick={() => setIsOpen(false)}>Shegaon</MobileNavLink>
               <MobileNavLink href="#manali" onClick={() => setIsOpen(false)}>Manali</MobileNavLink>
               <MobileNavLink href="#jaipur" onClick={() => setIsOpen(false)}>Jaipur</MobileNavLink>
+              <MobileNavLink href="#laddakh" onClick={() => setIsOpen(false)}>Laddakh</MobileNavLink>
+              <MobileNavLink href="#kailash-mansarovar" onClick={() => setIsOpen(false)}>Kailash</MobileNavLink>
               <MobileNavLink href="#contact" onClick={() => setIsOpen(false)} isButton>Contact</MobileNavLink>
             </div>
           </motion.div>
